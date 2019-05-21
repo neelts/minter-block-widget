@@ -17,10 +17,12 @@ using DateTools;
 
 class Main {
 
-	static var w:Window;
+	static var window:Window;
 
-	static var b = 0;
-	static var t = 0;
+	static inline var target = 138240;
+
+	static var block = 0;
+	static var time = 0;
 
 	static function update():Void {
 		try {
@@ -28,8 +30,8 @@ class Main {
 			if (response != null) {
 				var status = response.data;
 				if (status != null) {
-					b = status.latestBlockHeight;
-					t = status.averageBlockTime;
+					block = status.latestBlockHeight;
+					time = status.averageBlockTime;
 				}
 			}
 		}
@@ -40,9 +42,9 @@ class Main {
 		g.font = DefaultFont.get();
 		g.color = Color.White;
 		g.fontSize = 32;
-		var t = Date.fromTime((138240 - b) * t * 1000);
-		g.drawString('$b', 10, 10);
-		g.drawString('${t.format("%dd %H:%M:%S")}', 10, 40);
+		var time = Date.fromTime((target - block) * time * 1000);
+		g.drawString('$block', 10, 10);
+		g.drawString('${time.format("%dd %H:%M:%S")}', 10, 40);
 		g.end();
 	}
 
@@ -52,7 +54,7 @@ class Main {
 		var fo = new FramebufferOptions();
 		fo.frequency = 10;
 		System.start({title: "Project", width: 256, height: 128, window: wo, framebuffer: fo}, function (w) {
-			Main.w = w;
+			Main.window = w;
 			Assets.loadEverything(() -> {
 				init();
 				Scheduler.addTimeTask(() -> update(), 0, 10);
@@ -72,16 +74,16 @@ class Main {
 
 		m.notify(
 			(_, x, y) -> {
-				wx = w.x;
-				wy = w.y;
+				wx = window.x;
+				wy = window.y;
 				sx = x;
 				sy = y;
 			}, 
 			(b, x, y) -> {
 				switch (b) {
 					case 0: 
-						w.x = wx + (x - sx);
-						w.y = wy + (y - sy);
+						window.x = wx + (x - sx);
+						window.y = wy + (y - sy);
 					case 1: System.stop();
 					default:
 				}
